@@ -19,10 +19,14 @@ while(true):
     continue;
 
   var lines = join(prefixLines, "\n") & "\n" & line
-  writeFile("tmp.nim", lines)
+  writeFile("nrpltmp.nim", lines)
   try:
-    discard execShellCmd("nim --cc:tcc --verbosity:0 -d:release -r c tmp.nim")
+    discard execShellCmd("nim --cc:tcc --verbosity:0 -d:release -r c nrpltmp.nim")
   except:
     break
 
+removeFile("nrpltmp.nim")
+removeFile("nrpltmp")
+removeFile("nrpltmp.exe")
+removeDir("nimcache")
 quit()

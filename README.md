@@ -18,11 +18,11 @@ Sample execution:
 nrpl
 > import math
 > echo(sqrt(2))
-> 1.414213562373095
+1.414213562373095
 > # comments can be used
 > # crude multiple statement execution
 > var a:int; a = 6 * 7; echo(a)
-> 42
+42
 > # use either quit() or :quit to exit
 > quit()
 ```

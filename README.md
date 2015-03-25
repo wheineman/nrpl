@@ -26,3 +26,9 @@ nrpl
 > # use either quit() or :quit to exit
 > quit()
 ```
+
+Using nrpl in a Windows cmd shell or powershell will provide some history handling, i.e. the ability to use the up arrow and down arrow to recall commands. Under Linux you can use rlwrap to provide the same functionality:
+
+```
+rlwrap nrpl
+```

@@ -12,13 +12,15 @@ while(true):
   stdout.flushFile()
   var line = stdin.readLine()
   if line.strip().len() == 0:
-    continue;
+    continue
+  if line.strip().startsWith("#"):
+    continue
   if line == "quit()" or line == ":quit":
-    break;
+    break
 
   if line.startsWith("import "):
     prefixLines.add(line)
-    continue;
+    continue
 
   var lines = join(prefixLines, "\n") & "\n" & line
   writeFile("nrpltmp.nim", lines)

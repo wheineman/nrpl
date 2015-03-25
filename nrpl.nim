@@ -15,7 +15,7 @@ while(true):
     continue
   if line.strip().startsWith("#"):
     continue
-  if line == "quit()" or line == ":quit":
+  if line.strip().startsWith("quit()") or line == ":quit":
     break
 
   if line.startsWith("import "):

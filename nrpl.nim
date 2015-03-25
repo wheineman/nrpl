@@ -11,6 +11,8 @@ while(true):
   stdout.write("> ")
   stdout.flushFile()
   var line = stdin.readLine()
+  if line.strip().len() == 0:
+    continue;
   if line == "quit()" or line == ":quit":
     break;
 

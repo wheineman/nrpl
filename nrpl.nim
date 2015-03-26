@@ -1,6 +1,7 @@
 ##
 ## nrpl.nim
 ##
+## (c) Copyright 2015 Willy Heineman
 ##
 import os
 import re

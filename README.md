@@ -98,7 +98,8 @@ There are some immediate commands, that begin with a colon. You can access them 
 :save filename - saves history to file
 :run - run what's currently in history
 :quit - exit REPL
->```
+>
+```
 
 Using nrpl in a Windows cmd shell or powershell will provide some history handling, i.e. the ability to use the up arrow and down arrow to recall lines. Under Linux you can use rlwrap to provide the same functionality:
 

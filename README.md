@@ -55,7 +55,7 @@ $ nrpl
 
 This example shows an if statement that will be executed on exit of deferred mode:
 ```
-$ nimscript nrpl.nim
+$ nrpl
 > if 6 * 7 == 42:
 -   echo("6 * 7 is 42 and all's right in the universe")
 - else:

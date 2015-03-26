@@ -23,6 +23,9 @@ proc printHelp(): void =
   stdout.writeln(":help - print this help")
   stdout.writeln(":history - show history")
   stdout.writeln(":clear - clear history")
+  stdout.writeln(":load filename - clears history and loads a file into history")
+  stdout.writeln(":append filename - appends a file into history")
+  stdout.writeln(":save filename - saves history to file")
   stdout.writeln(":run - run what's currently in history")
   stdout.writeln(":quit - exit REPL")
 
@@ -41,6 +44,18 @@ proc isBlockImmediate(line: string): bool =
     return true
   else:
     return false
+
+proc saveToFile(filename: string) =
+  var outstr = ""
+  for line in prefixLines:
+    outstr.add(line & "\n")
+  writeFile(filename, outstr)
+  return
+
+proc readFromFile(filename: string) =
+  for line in filename.lines:
+    prefixLines.add(line)
+  return
 
 while(true):
   if inBlock:
@@ -76,8 +91,10 @@ while(true):
     continue
 
   if line == ":history":
+    var linum = 1
     for prefixLine in items(prefixLines):
-      stdout.writeln(prefixLine)
+      stdout.writeln(align(intToStr(linum), 3) & ": " & prefixLine)
+      linum = linum + 1
     continue
 
   if line == ":clear":
@@ -90,6 +107,22 @@ while(true):
       continue
     else:
       line = ""
+
+  if line.startsWith(":load"):
+    var tokens = line.strip().split(re"\s")
+    prefixLines = newSeq[string]()
+    readFromFile(tokens[1])
+    continue
+
+  if line.startsWith(":append"):
+    var tokens = line.strip().split(re"\s")
+    readFromFile(tokens[1])
+    continue
+
+  if line.startsWith(":save"):
+    var tokens = line.strip().split(re"\s")
+    saveToFile(tokens[1])
+    continue
 
   if line.startsWith("import "):
     prefixLines.add(line)

@@ -64,6 +64,27 @@ $ nimscript nrpl.nim
 6 * 7 is 42 and all's right in the universe
 > :quit
 ```
+And here's an example from Rosetta Code:
+```
+$ nrpl
+> proc Fibonacci(n: int, current: int64, next: int64): int64 =
+-   if n == 0:
+-     result = current
+-   else:
+-     result = Fibonacci(n - 1, next, current + next)
+- proc Fibonacci(n: int): int64 =
+-   result = Fibonacci(n, 0, 1)
+-
+> echo(Fibonacci(5))
+5
+> echo(Fibonacci(10))
+55
+> echo(Fibonacci(20))
+6765
+> echo(Fibonacci(30))
+832040
+>
+```
 
 There are some immediate commands, that begin with a colon. You can access them by entering ":help" or ":?" at any prompt. The current ones are:
 ```

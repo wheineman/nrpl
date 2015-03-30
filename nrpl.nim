@@ -1,12 +1,12 @@
 ##
 ## nrpl.nim
 ##
-## (c) Copyright 2015 Willy Heineman
 ##
 import os
 import re
 import strutils
 
+const version = "0.1.0"
 var prefixLines = newSeq[string]()
 var inBlock = false
 var blockStartKeywords =
@@ -28,6 +28,7 @@ proc printHelp(): void =
   stdout.writeln(":append filename - appends a file into history")
   stdout.writeln(":save filename - saves history to file")
   stdout.writeln(":run - run what's currently in history")
+  stdout.writeln(":version - display the current version")
   stdout.writeln(":quit - exit REPL")
 
 proc isStartBlock(line: string): bool =
@@ -84,52 +85,56 @@ while(true):
   if line.strip().startsWith("#"):
     continue
 
-  if line.strip().startsWith("quit()") or line == ":quit":
+  elif line.strip().startsWith("quit()") or line == ":quit":
     break
 
-  if line == ":?" or line == ":help":
+  elif line == ":?" or line == ":help":
     printHelp()
     continue
 
-  if line == ":history":
+  elif line == ":history":
     var linum = 1
     for prefixLine in items(prefixLines):
       stdout.writeln(align(intToStr(linum), 3) & ": " & prefixLine)
       linum = linum + 1
     continue
 
-  if line == ":clear":
+  elif line == ":clear":
     prefixLines = newSeq[string]()
     inBlock = false
     continue
 
-  if line == ":run":
+  elif line == ":run":
     if prefixLines.len() == 0:
       continue
     else:
       line = ""
 
-  if line.startsWith(":load"):
+  elif line.startsWith(":load"):
     var tokens = line.strip().split(re"\s")
     prefixLines = newSeq[string]()
     readFromFile(tokens[1])
     continue
 
-  if line.startsWith(":append"):
+  elif line.startsWith(":append"):
     var tokens = line.strip().split(re"\s")
     readFromFile(tokens[1])
     continue
 
-  if line.startsWith(":save"):
+  elif line.startsWith(":save"):
     var tokens = line.strip().split(re"\s")
     saveToFile(tokens[1])
     continue
 
-  if line.startsWith("import "):
+  elif line == ":version":
+    echo(version)
+    continue
+
+  elif line.startsWith("import "):
     prefixLines.add(line)
     continue
 
-  if line =~ re"\s*(\w+)\s*\=\s*.*":
+  elif line =~ re"\s*(\w+)\s*\=\s*.*":
     prefixLines.add(line)
     continue
 

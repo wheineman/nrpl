@@ -97,6 +97,7 @@ There are some immediate commands, that begin with a colon. You can access them 
 :append filename - appends a file into history
 :save filename - saves history to file
 :run - run what's currently in history
+:version - display the current version
 :quit - exit REPL
 >
 ```

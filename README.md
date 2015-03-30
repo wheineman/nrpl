@@ -3,7 +3,7 @@ Crude Nim REPL
 
 Based on an idea from here, <http://hookrace.net/blog/what-makes-nim-practical/>, this is a crude Read Evaluate Print Loop (REPL) for Nim using TCC to quickly compile each Read. It's quite crude, but supports deferred (or multiline) entry and execution. I'm creating this as a way to explore nim outside of the normal edit, compile, and run cycle although that's exactly what's going on behind the scene. In its current incarnation it is not intended as a development environment and it may not work exactly the way you want it to. That said, if you want to explore the features of Nim or explore some of the available modules, or try out a piece of code, it will do.
 
-Tested on Linux and Windows 8.1 with both the stable and devel versions of Nim
+Tested on Linux and Windows 8.1 with both the stable and devel versions of Nim. It should work anywhere Nim and TCC work.
 
 Requirements:
 - Nim (>= 0.10.2) installed and in your PATH.

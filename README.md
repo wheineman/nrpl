@@ -6,8 +6,8 @@ Based on an idea from here, <http://hookrace.net/blog/what-makes-nim-practical/>
 Tested on Linux and Windows 8.1 with both the stable and devel versions of Nim
 
 Requirements:
-Nim installed and in your PATH.
-TCC installed and in your PATH.
+- Nim (>= 0.10.2) installed and in your PATH.
+- TCC [http://bellard.org/tcc/] installed and in your PATH.
 
 Compile the source:
 ```

@@ -144,7 +144,8 @@ while(true):
   writeFile("nrpltmp.nim", lines)
   try:
     discard execShellCmd("nim --cc:tcc --verbosity:0 -d:release -r c nrpltmp.nim")
-    discard prefixLines.pop()
+    if line.contains("echo"):
+      discard prefixLines.pop()
   except:
     break
 

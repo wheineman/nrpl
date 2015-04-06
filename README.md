@@ -10,7 +10,7 @@ Requirements:
 - TCC [http://bellard.org/tcc/] installed and in your PATH.
 
 On systems that don't have TCC, for example OpenBSD, clang works pretty well. You'll need to change the variable "cc" to "clang" in the source before compiling:
-```
+```Nim
 var cc = "clang"  # C compiler to use for execution
 ```
 

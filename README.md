@@ -9,6 +9,11 @@ Requirements:
 - Nim (>= 0.10.2) installed and in your PATH.
 - TCC [http://bellard.org/tcc/] installed and in your PATH.
 
+On systems that don't have TCC, for example OpenBSD, clang works pretty well. You'll need to change the variable "cc" to "clang" in the source before compiling:
+```
+var cc = "clang"  # C compiler to use for execution
+```
+
 Compile the source:
 ```
 nim -d:release c nrpl.nim
@@ -91,16 +96,17 @@ There are some immediate commands, that begin with a colon. You can access them 
 > :help
 :? - print this help
 :help - print this help
-:history - show history
+:history - display history
 :clear - clear history
+:delete n[,m] - delete line or range of lines from history
 :load filename - clears history and loads a file into history
 :append filename - appends a file into history
 :save filename - saves history to file
 :run - run what's currently in history
 :version - display the current version
 :quit - exit REPL
->
 ```
+Most of the commands can be accessed by their first character, for example :h will display the history
 
 Using nrpl in a Windows cmd shell or powershell will provide some history handling, i.e. the ability to use the up arrow and down arrow to recall lines. Under Linux you can use rlwrap to provide the same functionality:
 

@@ -6,7 +6,8 @@ import os
 import re
 import strutils
 
-const version = "0.1.0"
+const version = "0.1.1"
+var cc = "tcc"  # C compiler to use for execution
 var prefixLines = newSeq[string]()
 var inBlock = false
 var blockStartKeywords =
@@ -24,6 +25,7 @@ proc printHelp(): void =
   stdout.writeln(":help - print this help")
   stdout.writeln(":history - show history")
   stdout.writeln(":clear - clear history")
+  stdout.writeln(":delete n[,m] - delete line or range of lines from history")
   stdout.writeln(":load filename - clears history and loads a file into history")
   stdout.writeln(":append filename - appends a file into history")
   stdout.writeln(":save filename - saves history to file")
@@ -83,50 +85,64 @@ while(true):
     continue
 
   if line.strip().startsWith("#"):
+    prefixLines.add(line)
     continue
 
-  elif line.strip().startsWith("quit()") or line == ":quit":
+  elif line.strip().startsWith("quit()") or line == ":quit" or line == ":q":
     break
 
   elif line == ":?" or line == ":help":
     printHelp()
     continue
 
-  elif line == ":history":
+  elif line == ":history" or line == ":h":
     var linum = 1
     for prefixLine in items(prefixLines):
       stdout.writeln(align(intToStr(linum), 3) & ": " & prefixLine)
       linum = linum + 1
     continue
 
-  elif line == ":clear":
+  elif line == ":clear" or line == ":c":
     prefixLines = newSeq[string]()
     inBlock = false
     continue
 
-  elif line == ":run":
+  elif line.startsWith(":delete ") or line.startsWith(":d "):
+    var tokens = line.strip().split()
+    if tokens[1].contains(","):
+      proc myStrip(s: string): string = s.strip()
+      var lineNums = tokens[1].split(",").map(myStrip).map(parseInt)
+      var lineNum = lineNums[0] - 1
+      for x in 0..lineNums.len:
+        prefixLines.delete(lineNum)
+    else:
+      var lineNum = parseInt(tokens[1]) - 1
+      prefixLines.delete(lineNum)
+    continue
+
+  elif line == ":run" or line == ":r":
     if prefixLines.len() == 0:
       continue
     else:
       line = ""
 
-  elif line.startsWith(":load"):
+  elif line.startsWith(":load ") or line.startsWith(":l "):
     var tokens = line.strip().split(re"\s")
     prefixLines = newSeq[string]()
     readFromFile(tokens[1])
     continue
 
-  elif line.startsWith(":append"):
+  elif line.startsWith(":append ") or line.startsWith(":a "):
     var tokens = line.strip().split(re"\s")
     readFromFile(tokens[1])
     continue
 
-  elif line.startsWith(":save"):
+  elif line.startsWith(":save ") or line.startsWith(":s "):
     var tokens = line.strip().split(re"\s")
     saveToFile(tokens[1])
     continue
 
-  elif line == ":version":
+  elif line == ":version" or line == ":v":
     echo(version)
     continue
 
@@ -143,7 +159,7 @@ while(true):
   var lines = join(prefixLines, "\n")
   writeFile("nrpltmp.nim", lines)
   try:
-    discard execShellCmd("nim --cc:tcc --verbosity:0 -d:release -r c nrpltmp.nim")
+    discard execShellCmd("nim --cc:" & cc & " --verbosity:0 -d:release -r c nrpltmp.nim")
     if line.contains("echo"):
       discard prefixLines.pop()
   except:

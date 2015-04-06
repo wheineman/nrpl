@@ -106,7 +106,7 @@ There are some immediate commands, that begin with a colon. You can access them 
 :version - display the current version
 :quit - exit REPL
 ```
-Most of the commands can be accessed by their first character, for example :h will display the history
+Most of the commands can be accessed by their first character, for example :h will display the history.
 
 Using nrpl in a Windows cmd shell or powershell will provide some history handling, i.e. the ability to use the up arrow and down arrow to recall lines. Under Linux you can use rlwrap to provide the same functionality:
 

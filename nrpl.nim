@@ -6,10 +6,11 @@ import os
 import re
 import strutils
 
-const version = "0.1.1"
+const version = "0.1.2"
 var cc = "tcc"  # C compiler to use for execution
 var prefixLines = newSeq[string]()
 var inBlock = false
+var inBlockImmediate = false
 var blockStartKeywords =
   ["var", "let",
    "proc", "method", "iterator", "macro", "template", "converter",
@@ -36,7 +37,7 @@ proc printHelp(): void =
 proc isStartBlock(line: string): bool =
   var ln = line.strip()
   var tokens = ln.split(re"\s")
-  if tokens[0] in blockStartKeywords:
+  if (tokens[0] in blockStartKeywords) or (line.len == ln.len and ln.endsWith(":")):
     return true
   else:
     return false
@@ -44,7 +45,7 @@ proc isStartBlock(line: string): bool =
 proc isBlockImmediate(line: string): bool =
   var ln = line.strip()
   var tokens = ln.split(re"\s")
-  if tokens[0] in blockImmediateKeywords:
+  if (tokens[0] in blockImmediateKeywords) or (line.len == ln.len and ln.endsWith(":")):
     return true
   else:
     return false
@@ -72,8 +73,9 @@ while(true):
   if line.strip().len() == 0:
     if inBlock:
       inBlock = false
-    if prefixLines.len() ==  0 or isBlockImmediate(prefixLines[0]) == false:
+    if prefixLines.len() ==  0 or inBlockImmediate == false:
       continue
+    inBlockImmediate = false
 
   if inBlock and line.strip().startsWith(":") == false:
     prefixLines.add(line)
@@ -81,6 +83,8 @@ while(true):
 
   if isStartBlock(line):
     inBlock = true
+    if isBlockImmediate(line):
+      inBlockImmediate = true
     prefixLines.add(line)
     continue
 
@@ -105,6 +109,7 @@ while(true):
   elif line == ":clear" or line == ":c":
     prefixLines = newSeq[string]()
     inBlock = false
+    inBlockImmediate = false
     continue
 
   elif line.startsWith(":delete ") or line.startsWith(":d "):

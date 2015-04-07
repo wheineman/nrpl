@@ -108,15 +108,15 @@ while(true):
     continue
 
   elif line.startsWith(":delete ") or line.startsWith(":d "):
-    var tokens = line.strip().split()
-    if tokens[1].contains(","):
+    var tokens = line.strip().split(re":d(elete)?\s+")
+    if tokens[0].contains(","):
       proc myStrip(s: string): string = s.strip()
-      var lineNums = tokens[1].split(",").map(myStrip).map(parseInt)
+      var lineNums = tokens[0].split(",").map(myStrip).map(parseInt)
       var lineNum = lineNums[0] - 1
       for x in 0..lineNums.len:
         prefixLines.delete(lineNum)
     else:
-      var lineNum = parseInt(tokens[1]) - 1
+      var lineNum = parseInt(tokens[0]) - 1
       prefixLines.delete(lineNum)
     continue
 

@@ -16,7 +16,7 @@ var cc = "clang"  # C compiler to use for execution
 
 Compile the source:
 ```
-nim -d:release --rangeChecks:on c nrpl.nim
+nim -d:release c nrpl.nim
 ```
 Sample execution:
 ```

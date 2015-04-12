@@ -26,6 +26,7 @@ proc printHelp(): void =
   stdout.writeln(":help - print this help")
   stdout.writeln(":history - show history")
   stdout.writeln(":clear - clear history")
+  stdout.writeln(":indent - push current indent forward")
   stdout.writeln(":delete n[,m] - delete line or range of lines from history")
   stdout.writeln(":load filename - clears history and loads a file into history")
   stdout.writeln(":append filename - appends a file into history")
@@ -112,6 +113,10 @@ while(true):
     prefixLines = newSeq[string]()
     indentLevel = 0
     inBlockImmediate = false
+    continue
+
+  elif line == ":indent" or line == ":i":
+    indentLevel += 1
     continue
 
   elif line.startsWith(":delete ") or line.startsWith(":d "):

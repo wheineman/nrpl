@@ -113,16 +113,29 @@ while(true):
     continue
 
   elif line.startsWith(":delete ") or line.startsWith(":d "):
-    var tokens = line.strip().split(re":d(elete)?\s+")
-    if tokens[0].contains(","):
-      proc myStrip(s: string): string = s.strip()
-      var lineNums = tokens[0].split(",").map(myStrip).map(parseInt)
-      var lineNum = lineNums[0] - 1
-      for x in 0..lineNums.len:
+    proc myStrip(s: string): string = s.strip()
+
+    try:
+      var numbers =
+        line.strip()
+            .replace(re":d(elete)?\s+", "")
+            .split(re"[,\s]+")
+            .map(myStrip)
+            .map(parseInt)
+
+      if numbers.len == 2:
+        var lineNum = numbers[0] - 1
+        for x in numbers[0]..numbers[1]:
+          prefixLines.delete(lineNum)
+      elif numbers.len == 1:
+        var lineNum = numbers[0] - 1
         prefixLines.delete(lineNum)
-    else:
-      var lineNum = parseInt(tokens[0]) - 1
-      prefixLines.delete(lineNum)
+      else:
+        echo "syntax: :delete from[,to]"
+    except RangeError:
+      echo "Invalid line numbers"
+    except ValueError:
+      echo "syntax: :delete from[,to]"
     continue
 
   elif line == ":run" or line == ":r":
@@ -164,8 +177,8 @@ while(true):
   var lines = join(prefixLines, "\n")
   writeFile("nrpltmp.nim", lines)
   try:
-    discard execShellCmd("nim --cc:" & cc & " --verbosity:0 -d:release -r c nrpltmp.nim")
-    if line.contains("echo"):
+    let res = execShellCmd("nim --cc:" & cc & " --verbosity:0 -d:release -r c nrpltmp.nim")
+    if res != 0 or line.contains("echo"):
       discard prefixLines.pop()
   except:
     break

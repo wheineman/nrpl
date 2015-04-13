@@ -38,8 +38,12 @@ proc printHelp(): void =
 proc isStartBlock(line: string): bool =
   var ln = line.strip()
   var tokens = ln.split(re"\s")
-  if (tokens[0] in blockStartKeywords) or (line.len == ln.len and ln.endsWith(":")):
-    return true
+  var keyword = tokens[0]
+  if (keyword in blockStartKeywords) or (line.len == ln.len and ln.endsWith(":")):
+    if keyword == "var" or keyword == "let":
+      return not (ln.len > keyword.len)
+    else:
+      return true
   else:
     return false
 

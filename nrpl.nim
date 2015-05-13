@@ -125,6 +125,7 @@ while(true):
     for prefixLine in items(prefixLines):
       stdout.writeln(align(intToStr(linum), 3) & ": " & prefixLine)
       linum = linum + 1
+    stdout.writeln()
     continue
 
   elif line == ":clear" or line == ":c":

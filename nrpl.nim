@@ -1,15 +1,16 @@
 ##
 ## nrpl.nim
 ##
-##
 import os
 import re
 import strutils
 
-const version = "0.1.1"
+const version = "0.1.3"
+## var cc = "clang"  # C compiler to use for execution
 var cc = "tcc"  # C compiler to use for execution
 var prefixLines = newSeq[string]()
 var inBlock = false
+var inBlockImmediate = false
 var blockStartKeywords =
   ["var", "let",
    "proc", "method", "iterator", "macro", "template", "converter",
@@ -36,7 +37,7 @@ proc printHelp(): void =
 proc isStartBlock(line: string): bool =
   var ln = line.strip()
   var tokens = ln.split(re"\s")
-  if tokens[0] in blockStartKeywords:
+  if (tokens[0] in blockStartKeywords) or (line.len == ln.len and ln.endsWith(":")):
     return true
   else:
     return false
@@ -44,7 +45,7 @@ proc isStartBlock(line: string): bool =
 proc isBlockImmediate(line: string): bool =
   var ln = line.strip()
   var tokens = ln.split(re"\s")
-  if tokens[0] in blockImmediateKeywords:
+  if (tokens[0] in blockImmediateKeywords) or (line.len == ln.len and ln.endsWith(":")):
     return true
   else:
     return false
@@ -57,7 +58,7 @@ proc saveToFile(filename: string) =
   return
 
 proc readFromFile(filename: string) =
-  for line in filename.lines:
+  for line in filename.lines():
     prefixLines.add(line)
   return
 
@@ -72,8 +73,9 @@ while(true):
   if line.strip().len() == 0:
     if inBlock:
       inBlock = false
-    if prefixLines.len() ==  0 or isBlockImmediate(prefixLines[0]) == false:
+    if prefixLines.len() ==  0 or inBlockImmediate == false:
       continue
+    inBlockImmediate = false
 
   if inBlock and line.strip().startsWith(":") == false:
     prefixLines.add(line)
@@ -81,11 +83,33 @@ while(true):
 
   if isStartBlock(line):
     inBlock = true
+    if isBlockImmediate(line):
+      inBlockImmediate = true
     prefixLines.add(line)
     continue
 
   if line.strip().startsWith("#"):
     prefixLines.add(line)
+    continue
+
+  elif line.startsWith(":delete ") or line.startsWith(":d "):
+    var tokens = line.strip().split(re":d(elete)?\s+")
+    if tokens[1].contains(","):
+      proc myStrip(s: string): string = s.strip()
+      var lineNums = tokens[1].split(",").map(myStrip).map(parseInt)
+      var lineNum = lineNums[0] - 1
+      for x in 0..lineNums.len:
+        if lineNum < prefixLines.len():
+          prefixLines.delete(lineNum)
+        else:
+          echo "Error: Line number outside range of lines."
+          break
+    else:
+      var lineNum = parseInt(tokens[1]) - 1
+      if lineNum < prefixLines.len():
+        prefixLines.delete(lineNum)
+      else:
+        echo "Error: Line number outside range of lines."
     continue
 
   elif line.strip().startsWith("quit()") or line == ":quit" or line == ":q":
@@ -105,19 +129,7 @@ while(true):
   elif line == ":clear" or line == ":c":
     prefixLines = newSeq[string]()
     inBlock = false
-    continue
-
-  elif line.startsWith(":delete ") or line.startsWith(":d "):
-    var tokens = line.strip().split()
-    if tokens[1].contains(","):
-      proc myStrip(s: string): string = s.strip()
-      var lineNums = tokens[1].split(",").map(myStrip).map(parseInt)
-      var lineNum = lineNums[0] - 1
-      for x in 0..lineNums.len:
-        prefixLines.delete(lineNum)
-    else:
-      var lineNum = parseInt(tokens[1]) - 1
-      prefixLines.delete(lineNum)
+    inBlockImmediate = false
     continue
 
   elif line == ":run" or line == ":r":

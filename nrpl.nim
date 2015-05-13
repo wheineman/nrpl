@@ -99,7 +99,7 @@ while(true):
       proc myStrip(s: string): string = s.strip()
       var lineNums = tokens[1].split(",").map(myStrip).map(parseInt)
       var lineNum = lineNums[0] - 1
-      for x in 0..lineNums.len:
+      for x in lineNums[0]..lineNums[1]:
         if lineNum < prefixLines.len():
           prefixLines.delete(lineNum)
         else:
@@ -125,7 +125,7 @@ while(true):
     for prefixLine in items(prefixLines):
       stdout.writeln(align(intToStr(linum), 3) & ": " & prefixLine)
       linum = linum + 1
-    stdout.writeln()
+    stdout.writeln("")
     continue
 
   elif line == ":clear" or line == ":c":

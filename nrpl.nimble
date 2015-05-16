@@ -8,4 +8,4 @@ license       = "MIT"
 bin           = "nrpl"
 
 [Deps]
-Requires: "nim >= 0.10.0, tcc >= 0.9.26"
+Requires: "nim >= 0.10.0"

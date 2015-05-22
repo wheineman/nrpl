@@ -3,24 +3,29 @@
 ##
 ##
 import os
+import osproc
 import re
 import strutils
 
-const version = "0.1.3"
+const version = "0.1.4"
 ## var cc = "clang"  # C compiler to use for execution
 var cc = "tcc"  # C compiler to use for execution
 var prefixLines = newSeq[string]()
 var inBlock = false
 var inBlockImmediate = false
-var blockStartKeywords =
+
+let blockStartKeywords =
   ["var", "let",
    "proc", "method", "iterator", "macro", "template", "converter",
    "type", "const",
    "block", "if", "when", "while", "case", "for",
     "try:"]
 
-var blockImmediateKeywords =
+let blockImmediateKeywords =
   ["block", "if", "when", "while", "case", "for", "try:"]
+
+let errorsNotDisplayed =
+  ["is declared but not used [XDeclaredButNotUsed]"]
 
 proc printHelp(): void =
   stdout.writeln(":? - print this help")
@@ -39,6 +44,9 @@ proc isStartBlock(line: string): bool =
   var ln = line.strip()
   var tokens = ln.split(re"\s")
   if (tokens[0] in blockStartKeywords) or (line.len == ln.len and ln.endsWith(":")):
+    if (tokens[0] in ["let", "var"]):
+      if ln != tokens[0]:
+        return false
     return true
   else:
     return false
@@ -62,6 +70,14 @@ proc readFromFile(filename: string) =
   for line in filename.lines():
     prefixLines.add(line)
   return
+
+proc isErrorNotDisplayed(line: string): bool =
+  var returnValue = false
+  for errorNotDisplayed in errorsNotDisplayed:
+    if line.contains(errorNotDisplayed):
+      returnValue = true
+      break
+  return returnValue
 
 while(true):
   if inBlock:
@@ -173,7 +189,11 @@ while(true):
   var lines = join(prefixLines, "\n")
   writeFile("nrpltmp.nim", lines)
   try:
-    discard execShellCmd("nim --cc:" & cc & " --verbosity:0 -d:release -r c nrpltmp.nim")
+    let result = execCmdEx("nim --cc:" & cc & " --verbosity:0 -d:release -r c nrpltmp.nim")
+    for rline in splitLines(result.output):
+      if not(isErrorNotDisplayed(rline)):
+        if rline.strip().len() > 0:
+          stdout.writeln(rline)
     if line.contains("echo"):
       discard prefixLines.pop()
   except:

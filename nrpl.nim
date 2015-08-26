@@ -8,8 +8,9 @@ import re
 import strutils
 
 const version = "0.1.4"
-## var cc = "clang"  # C compiler to use for execution
-var cc = "tcc"  # C compiler to use for execution
+# var cc = "clang"  # C compiler to use for execution
+#var cc = "tcc"  # C compiler to use for execution
+var cc = ""
 var prefixLines = newSeq[string]()
 var inBlock = false
 var inBlockImmediate = false
@@ -188,19 +189,28 @@ while(true):
   prefixLines.add(line)
   var lines = join(prefixLines, "\n")
   writeFile("nrpltmp.nim", lines)
+
   try:
-    let result = execCmdEx("nim --cc:" & cc & " --verbosity:0 -d:release -r c nrpltmp.nim")
+    var commandBuf : string
+    if cc == "":
+      commandBuf = "nim --verbosity:0 -d:release -r c nrpltmp.nim"
+    else:
+      commandBuf = "nim --cc:" & cc & " --verbosity:0 -d:release -r c nrpltmp.nim"
+    let result = execCmdEx(commandBuf)
     for rline in splitLines(result.output):
+
       if not(isErrorNotDisplayed(rline)):
         if rline.strip().len() > 0:
           stdout.writeln(rline)
     if line.contains("echo"):
       discard prefixLines.pop()
   except:
+    echo("Something went wrong wtf....")
     break
 
 removeFile("nrpltmp.nim")
 removeFile("nrpltmp")
 removeFile("nrpltmp.exe")
 removeDir("nimcache")
+
 quit()

@@ -164,7 +164,7 @@ while(true):
   var lines = join(prefixLines, "\n")
   writeFile("nrpltmp.nim", lines)
   try:
-    let res = execShellCmd("nim --cc:" & cc & " --verbosity:0 -d:release -r c nrpltmp.nim")
+    let res = execShellCmd("nim --cc:" & cc & " --verbosity:0 -d:release --parallelBuild:1 -r c nrpltmp.nim")
     if res != 0 or line.contains("echo"):
       discard prefixLines.pop()
   except:

@@ -9,8 +9,8 @@ import strutils
 const version = "0.1.2"
 var cc = "tcc"  # C compiler to use for execution
 var prefixLines = newSeq[string]()
-var inBlock = false
 var inBlockImmediate = false
+var indentLevel = 0
 var blockStartKeywords =
   ["var", "let",
    "proc", "method", "iterator", "macro", "template", "converter",
@@ -26,6 +26,7 @@ proc printHelp(): void =
   stdout.writeln(":help - print this help")
   stdout.writeln(":history - show history")
   stdout.writeln(":clear - clear history")
+  stdout.writeln(":indent - push current indent forward")
   stdout.writeln(":delete n[,m] - delete line or range of lines from history")
   stdout.writeln(":load filename - clears history and loads a file into history")
   stdout.writeln(":append filename - appends a file into history")
@@ -37,8 +38,12 @@ proc printHelp(): void =
 proc isStartBlock(line: string): bool =
   var ln = line.strip()
   var tokens = ln.split(re"\s")
-  if (tokens[0] in blockStartKeywords) or (line.len == ln.len and ln.endsWith(":")):
-    return true
+  var keyword = tokens[0]
+  if (keyword in blockStartKeywords) or (line.len == ln.len and ln.endsWith(":")):
+    if keyword == "var" or keyword == "let":
+      return not (ln.len > keyword.len)
+    else:
+      return true
   else:
     return false
 
@@ -63,28 +68,30 @@ proc readFromFile(filename: string) =
   return
 
 while(true):
-  if inBlock:
-    stdout.write("- ")
+  let indent = ' '.repeat(indentLevel * 2)
+  if indentLevel > 0:
+    stdout.write("..")
+    stdout.write(indent)
   else:
     stdout.write("> ")
   stdout.flushFile()
-  var line = stdin.readLine()
+  var line = indent & stdin.readLine()
 
   if line.strip().len() == 0:
-    if inBlock:
-      inBlock = false
+    if indentLevel > 0:
+      indentLevel -= 1
     if prefixLines.len() ==  0 or inBlockImmediate == false:
       continue
     inBlockImmediate = false
 
-  if inBlock and line.strip().startsWith(":") == false:
+  if isStartBlock(line):
+    indentLevel += 1
+    if isBlockImmediate(line):
+      inBlockImmediate = true
     prefixLines.add(line)
     continue
 
-  if isStartBlock(line):
-    inBlock = true
-    if isBlockImmediate(line):
-      inBlockImmediate = true
+  if indentLevel > 0 and line.strip().startsWith(":") == false:
     prefixLines.add(line)
     continue
 
@@ -108,8 +115,12 @@ while(true):
 
   elif line == ":clear" or line == ":c":
     prefixLines = newSeq[string]()
-    inBlock = false
+    indentLevel = 0
     inBlockImmediate = false
+    continue
+
+  elif line == ":indent" or line == ":i":
+    indentLevel += 1
     continue
 
   elif line.startsWith(":delete ") or line.startsWith(":d "):

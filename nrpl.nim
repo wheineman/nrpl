@@ -6,6 +6,7 @@ import os
 import osproc
 import re
 import strutils
+import sequtils
 
 const version = "0.1.4"
 ## var cc = "clang"  # C compiler to use for execution
@@ -28,17 +29,17 @@ let errorsNotDisplayed =
   ["is declared but not used [XDeclaredButNotUsed]"]
 
 proc printHelp(): void =
-  stdout.writeln(":? - print this help")
-  stdout.writeln(":help - print this help")
-  stdout.writeln(":history - show history")
-  stdout.writeln(":clear - clear history")
-  stdout.writeln(":delete n[,m] - delete line or range of lines from history")
-  stdout.writeln(":load filename - clears history and loads a file into history")
-  stdout.writeln(":append filename - appends a file into history")
-  stdout.writeln(":save filename - saves history to file")
-  stdout.writeln(":run - run what's currently in history")
-  stdout.writeln(":version - display the current version")
-  stdout.writeln(":quit - exit REPL")
+  stdout.writeLine(":? - print this help")
+  stdout.writeLine(":help - print this help")
+  stdout.writeLine(":history - show history")
+  stdout.writeLine(":clear - clear history")
+  stdout.writeLine(":delete n[,m] - delete line or range of lines from history")
+  stdout.writeLine(":load filename - clears history and loads a file into history")
+  stdout.writeLine(":append filename - appends a file into history")
+  stdout.writeLine(":save filename - saves history to file")
+  stdout.writeLine(":run - run what's currently in history")
+  stdout.writeLine(":version - display the current version")
+  stdout.writeLine(":quit - exit REPL")
 
 proc isStartBlock(line: string): bool =
   var ln = line.strip()
@@ -139,9 +140,9 @@ while(true):
   elif line == ":history" or line == ":h":
     var linum = 1
     for prefixLine in items(prefixLines):
-      stdout.writeln(align(intToStr(linum), 3) & ": " & prefixLine)
+      stdout.writeLine(align(intToStr(linum), 3) & ": " & prefixLine)
       linum = linum + 1
-    stdout.writeln("")
+    stdout.writeLine("")
     continue
 
   elif line == ":clear" or line == ":c":
@@ -193,7 +194,7 @@ while(true):
     for rline in splitLines(result.output):
       if not(isErrorNotDisplayed(rline)):
         if rline.strip().len() > 0:
-          stdout.writeln(rline)
+          stdout.writeLine(rline)
     if line.contains("echo"):
       discard prefixLines.pop()
   except:

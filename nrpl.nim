@@ -86,7 +86,9 @@ while(true):
   else:
     stdout.write("> ")
   stdout.flushFile()
-  var line = stdin.readLine()
+  var line = ""
+  if not stdin.readLine(line):
+    quit()
 
   if line.strip().len() == 0:
     if inBlock:

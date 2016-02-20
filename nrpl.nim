@@ -6,6 +6,7 @@ import os
 import osproc
 import re
 import strutils
+import sequtils
 
 const version = "0.1.4"
 ## var cc = "clang"  # C compiler to use for execution
@@ -195,6 +196,8 @@ while(true):
         if rline.strip().len() > 0:
           stdout.writeln(rline)
     if line.contains("echo"):
+      discard prefixLines.pop()
+    elif result.exitCode != 0:
       discard prefixLines.pop()
   except:
     break

@@ -6,6 +6,7 @@ import os
 import osproc
 import re
 import strutils
+import sequtils
 
 const version = "0.1.4"
 ## var cc = "clang"  # C compiler to use for execution
@@ -85,7 +86,9 @@ while(true):
   else:
     stdout.write("> ")
   stdout.flushFile()
-  var line = stdin.readLine()
+  var line = ""
+  if not stdin.readLine(line):
+    break
 
   if line.strip().len() == 0:
     if inBlock:
@@ -195,6 +198,8 @@ while(true):
         if rline.strip().len() > 0:
           stdout.writeln(rline)
     if line.contains("echo"):
+      discard prefixLines.pop()
+    elif result.exitCode != 0:
       discard prefixLines.pop()
   except:
     break

@@ -88,7 +88,7 @@ while(true):
   stdout.flushFile()
   var line = ""
   if not stdin.readLine(line):
-    quit()
+    break
 
   if line.strip().len() == 0:
     if inBlock:

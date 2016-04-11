@@ -198,7 +198,7 @@ while(true):
   writeFile("nrpltmp.nim", lines)
   try:
     let res = execShellCmd("nim --cc:" & cc & " --verbosity:0 -d:release --parallelBuild:1 -r c nrpltmp.nim")
-    if res != 0 or line.contains("echo"):
+    if res != 0 or line.strip().startsWith("echo"):
       discard prefixLines.pop()
   except:
     break

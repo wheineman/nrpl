@@ -9,7 +9,8 @@ import strutils
 import sequtils
 import rdstdin
 
-const version = "0.1.2"
+const version = "0.2.0"
+
 var cc = "tcc"  # C compiler to use for execution
 var prefixLines = newSeq[string]()
 var inBlockImmediate = false

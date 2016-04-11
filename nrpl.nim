@@ -3,7 +3,8 @@
 ##
 ##
 import os
-import re
+import nre
+import options
 import strutils
 
 const version = "0.1.2"
@@ -22,18 +23,18 @@ var blockImmediateKeywords =
   ["block", "if", "when", "while", "case", "for", "try:"]
 
 proc printHelp(): void =
-  stdout.writeln(":? - print this help")
-  stdout.writeln(":help - print this help")
-  stdout.writeln(":history - show history")
-  stdout.writeln(":clear - clear history")
-  stdout.writeln(":indent - push current indent forward")
-  stdout.writeln(":delete n[,m] - delete line or range of lines from history")
-  stdout.writeln(":load filename - clears history and loads a file into history")
-  stdout.writeln(":append filename - appends a file into history")
-  stdout.writeln(":save filename - saves history to file")
-  stdout.writeln(":run - run what's currently in history")
-  stdout.writeln(":version - display the current version")
-  stdout.writeln(":quit - exit REPL")
+  echo(":? - print this help")
+  echo(":help - print this help")
+  echo(":history - show history")
+  echo(":clear - clear history")
+  echo(":indent - push current indent forward")
+  echo(":delete n[,m] - delete line or range of lines from history")
+  echo(":load filename - clears history and loads a file into history")
+  echo(":append filename - appends a file into history")
+  echo(":save filename - saves history to file")
+  echo(":run - run what's currently in history")
+  echo(":version - display the current version")
+  echo(":quit - exit REPL")
 
 proc isStartBlock(line: string): bool =
   var ln = line.strip()
@@ -109,7 +110,7 @@ while(true):
   elif line == ":history" or line == ":h":
     var linum = 1
     for prefixLine in items(prefixLines):
-      stdout.writeln(align(intToStr(linum), 3) & ": " & prefixLine)
+      echo(align(intToStr(linum), 3) & ": " & prefixLine)
       linum = linum + 1
     continue
 
@@ -179,7 +180,7 @@ while(true):
     prefixLines.add(line)
     continue
 
-  elif line =~ re"\s*(\w+)\s*\=\s*.*":
+  elif line.match(re"\s*(\w+)\s*\=\s*.*").isSome:
     prefixLines.add(line)
     continue
 

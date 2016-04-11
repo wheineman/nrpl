@@ -6,6 +6,7 @@ import os
 import nre
 import options
 import strutils
+import sequtils
 
 const version = "0.1.2"
 var cc = "tcc"  # C compiler to use for execution

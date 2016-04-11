@@ -7,6 +7,7 @@ import nre
 import options
 import strutils
 import sequtils
+import rdstdin
 
 const version = "0.1.2"
 var cc = "tcc"  # C compiler to use for execution
@@ -71,13 +72,19 @@ proc readFromFile(filename: string) =
 
 while(true):
   let indent = ' '.repeat(indentLevel * 2)
+  var prompt = "> "
   if indentLevel > 0:
-    stdout.write("..")
+    prompt = "  ".repeat(indentLevel + 1)
     stdout.write(indent)
   else:
-    stdout.write("> ")
-  stdout.flushFile()
-  var line = indent & stdin.readLine()
+    stdout.flushFile()
+  var line: string
+  try:
+    line = readLineFromSTDIN(prompt)
+  except IOError:
+    break
+
+  line = indent & line
 
   if line.strip().len() == 0:
     if indentLevel > 0:

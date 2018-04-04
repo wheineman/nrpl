@@ -198,7 +198,7 @@ proc runLoop() =
     writeFile("nrpltmp.nim", lines)
     try:
       #TODO: we probably want to optimize for compilation speed, so `-d:release` seems wrong
-      let result = execCmdEx("nim --cc:" & nrpl_cc & " --verbosity:0 -d:release -r c nrpltmp.nim")
+      let result = execCmdEx("nim --cc:" & nrpl_cc & " --verbosity:0 --hints:off -d:release -r c nrpltmp.nim")
       for rline in splitLines(result.output):
         if not(isErrorNotDisplayed(rline)):
           if rline.strip().len() > 0:

@@ -1,6 +1,7 @@
 [Package]
 name          = "nrpl"
-version       = "0.1.4"
+# TODO: 
+version       = "0.1.5"
 author        = "Willy Heineman"
 description   = "A Nim REPL"
 license       = "MIT"
@@ -8,4 +9,4 @@ license       = "MIT"
 bin           = "nrpl"
 
 [Deps]
-Requires: "nim >= 0.10.0"
+Requires: "nim >= 0.18.0"

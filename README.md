@@ -6,13 +6,8 @@ Based on an idea from here, <http://hookrace.net/blog/what-makes-nim-practical/>
 Tested on Linux and Windows 8.1 with both the stable and devel versions of Nim. It should work anywhere Nim and TCC work.
 
 Requirements:
-- Nim (>= 0.10.2) installed and in your PATH.
-- TCC [http://bellard.org/tcc/] installed and in your PATH.
-
-On systems that don't have TCC, for example OpenBSD, clang works pretty well. You'll need to change the variable "cc" to "clang" in the source before compiling:
-```Nim
-var cc = "clang"  # C compiler to use for execution
-```
+- Nim installed and in your PATH (see nrpl.nimble for required version)
+- TCC [http://bellard.org/tcc/] installed and in your PATH, or on systems that don't have TCC, for example OpenBSD, clang works pretty well: use `nrpl --cc:clang` to change C compiler to use for execution
 
 Compile the source:
 ```
@@ -20,6 +15,9 @@ nim -d:release c nrpl.nim
 ```
 Sample execution:
 ```
+# show help
+nrpl -h
+
 nrpl
 > import math
 > echo(sqrt(2))

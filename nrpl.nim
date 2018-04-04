@@ -11,8 +11,11 @@ import sequtils
 
 const version = "0.1.5" # TODO: get from nrpl.nimble
 
-# var nrpl_cc {.strdefine.} = "tcc" # C compiler to use for execution; eg: tcc, clang
-var nrpl_cc = "tcc" # C compiler to use for execution; eg: tcc, clang
+## C compiler to use for execution
+when defined(macosx):
+  var nrpl_cc = "clang" ## tcc seems badly supported, see: https://github.com/wheineman/nrpl/issues/16
+else:
+  var nrpl_cc = "tcc"
 
 var prefixLines = newSeq[string]()
 var inBlock = false
@@ -194,6 +197,7 @@ proc runLoop() =
     var lines = join(prefixLines, "\n")
     writeFile("nrpltmp.nim", lines)
     try:
+      #TODO: we probably want to optimize for compilation speed, so `-d:release` seems wrong
       let result = execCmdEx("nim --cc:" & nrpl_cc & " --verbosity:0 -d:release -r c nrpltmp.nim")
       for rline in splitLines(result.output):
         if not(isErrorNotDisplayed(rline)):
@@ -204,6 +208,7 @@ proc runLoop() =
     except:
       break
 
+  # NOTE: not guaranteed to run if error occurs
   removeFile("nrpltmp.nim")
   removeFile("nrpltmp")
   removeFile("nrpltmp.exe")

@@ -28,17 +28,17 @@ let errorsNotDisplayed =
   ["is declared but not used [XDeclaredButNotUsed]"]
 
 proc printHelp(): void =
-  stdout.writeln(":? - print this help")
-  stdout.writeln(":help - print this help")
-  stdout.writeln(":history - show history")
-  stdout.writeln(":clear - clear history")
-  stdout.writeln(":delete n[,m] - delete line or range of lines from history")
-  stdout.writeln(":load filename - clears history and loads a file into history")
-  stdout.writeln(":append filename - appends a file into history")
-  stdout.writeln(":save filename - saves history to file")
-  stdout.writeln(":run - run what's currently in history")
-  stdout.writeln(":version - display the current version")
-  stdout.writeln(":quit - exit REPL")
+  echo(":? - print this help")
+  echo(":help - print this help")
+  echo(":history - show history")
+  echo(":clear - clear history")
+  echo(":delete n[,m] - delete line or range of lines from history")
+  echo(":load filename - clears history and loads a file into history")
+  echo(":append filename - appends a file into history")
+  echo(":save filename - saves history to file")
+  echo(":run - run what's currently in history")
+  echo(":version - display the current version")
+  echo(":quit - exit REPL")
 
 proc isStartBlock(line: string): bool =
   var ln = line.strip()
@@ -139,9 +139,9 @@ while(true):
   elif line == ":history" or line == ":h":
     var linum = 1
     for prefixLine in items(prefixLines):
-      stdout.writeln(align(intToStr(linum), 3) & ": " & prefixLine)
+      echo(align(intToStr(linum), 3) & ": " & prefixLine)
       linum = linum + 1
-    stdout.writeln("")
+    echo("")
     continue
 
   elif line == ":clear" or line == ":c":
@@ -193,7 +193,7 @@ while(true):
     for rline in splitLines(result.output):
       if not(isErrorNotDisplayed(rline)):
         if rline.strip().len() > 0:
-          stdout.writeln(rline)
+          echo(rline)
     if line.contains("echo"):
       discard prefixLines.pop()
   except:

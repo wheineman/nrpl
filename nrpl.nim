@@ -8,8 +8,9 @@ import re
 import strutils
 
 const version = "0.1.4"
+var cc = "gcc"  # C compiler to use for execution
 ## var cc = "clang"  # C compiler to use for execution
-var cc = "tcc"  # C compiler to use for execution
+## var cc = "tcc"  # C compiler to use for execution
 var prefixLines = newSeq[string]()
 var inBlock = false
 var inBlockImmediate = false
